@@ -755,160 +755,160 @@ Resources:
       Path: /
       Roles:
       - !Ref rAppInstanceRole
-  rAutoScalingConfigApp:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    DependsOn:
-    - rRDSInstanceMySQL
-    Metadata:
-      AWS::CloudFormation::Init:
-        configSets:
-          wordpress_install:
-          - install_cfn
-          - install_wordpress
-        install_cfn:
-          files:
-            /etc/cfn/cfn-hup.conf:
-              content: !Sub |
-                [main]
-                stack=${AWS::StackId}
-                region=${AWS::Region}
-              mode: '000400'
-              owner: root
-              group: root
-            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
-              content: !Sub |
-                [cfn-auto-reloader-hook]
-                triggers=post.update
-                path=Resources.rAutoScalingConfigApp.Metadata.AWS::CloudFormation::Init
-                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource rAutoScalingGroupApp --configsets wordpress_install --region ${AWS::Region}
-              mode: '000400'
-              owner: root
-              group: root
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: true
-                ensureRunning: true
-                files:
-                - /etc/cfn/cfn-hup.conf
-                - /etc/cfn/hooks.d/cfn-auto-reloader.conf
-        install_wordpress:
-          packages:
-            yum:
-              php: []
-              php-mysql: []
-              mysql: []
-              httpd: []
-          sources:
-            /var/www/html: https://wordpress.org/latest.tar.gz
-          files:
-            /var/www/html/wordpress/wp-config.php:
-              content: !Sub |
-                <?php
-                define('DB_NAME', '${pDBName}');
-                define('DB_USER', '${pDBUser}');
-                define('DB_PASSWORD', '${pDBPassword}');
-                define('DB_HOST', '${rRDSInstanceMySQL.Endpoint.Address}');
-                define('FORCE_SSL_ADMIN', true);
-                if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) { $_SERVER['HTTPS']='on'; }
-                define('DB_CHARSET', 'utf8');
-                define('DB_COLLATE', '');
+  # rAutoScalingConfigApp:
+  #   Type: AWS::AutoScaling::LaunchConfiguration
+  #   DependsOn:
+  #   - rRDSInstanceMySQL
+  #   Metadata:
+  #     AWS::CloudFormation::Init:
+  #       configSets:
+  #         wordpress_install:
+  #         - install_cfn
+  #         - install_wordpress
+  #       install_cfn:
+  #         files:
+  #           /etc/cfn/cfn-hup.conf:
+  #             content: !Sub |
+  #               [main]
+  #               stack=${AWS::StackId}
+  #               region=${AWS::Region}
+  #             mode: '000400'
+  #             owner: root
+  #             group: root
+  #           /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+  #             content: !Sub |
+  #               [cfn-auto-reloader-hook]
+  #               triggers=post.update
+  #               path=Resources.rAutoScalingConfigApp.Metadata.AWS::CloudFormation::Init
+  #               action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource rAutoScalingGroupApp --configsets wordpress_install --region ${AWS::Region}
+  #             mode: '000400'
+  #             owner: root
+  #             group: root
+  #         services:
+  #           sysvinit:
+  #             cfn-hup:
+  #               enabled: true
+  #               ensureRunning: true
+  #               files:
+  #               - /etc/cfn/cfn-hup.conf
+  #               - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+  #       install_wordpress:
+  #         packages:
+  #           yum:
+  #             php: []
+  #             php-mysql: []
+  #             mysql: []
+  #             httpd: []
+  #         sources:
+  #           /var/www/html: https://wordpress.org/latest.tar.gz
+  #         files:
+  #           /var/www/html/wordpress/wp-config.php:
+  #             content: !Sub |
+  #               <?php
+  #               define('DB_NAME', '${pDBName}');
+  #               define('DB_USER', '${pDBUser}');
+  #               define('DB_PASSWORD', '${pDBPassword}');
+  #               define('DB_HOST', '${rRDSInstanceMySQL.Endpoint.Address}');
+  #               define('FORCE_SSL_ADMIN', true);
+  #               if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) { $_SERVER['HTTPS']='on'; }
+  #               define('DB_CHARSET', 'utf8');
+  #               define('DB_COLLATE', '');
 
-                $table_prefix = 'wp_';
-                define('WP_DEBUG', false);
+  #               $table_prefix = 'wp_';
+  #               define('WP_DEBUG', false);
 
-                if ( !defined('ABSPATH') )
-                  define('ABSPATH', dirname(__FILE__) . '/');
+  #               if ( !defined('ABSPATH') )
+  #                 define('ABSPATH', dirname(__FILE__) . '/');
 
-                require_once(ABSPATH . 'wp-settings.php');
-              mode: '000644'
-              owner: root
-              group: root
-          services:
-            sysvinit:
-              httpd:
-                enabled: true
-                ensureRunning: true
-    Properties:
-      ImageId: !Ref pAppAmi
-      IamInstanceProfile: !Ref rAppInstanceProfile
-      InstanceType: !Ref pAppInstanceType
-      BlockDeviceMappings:
-      - DeviceName: /dev/sdh
-        Ebs:
-          VolumeSize: 50
-          VolumeType: gp2
-          Encrypted: true
-      KeyName: !Ref pEC2KeyPair
-      SecurityGroups:
-      - !Ref rSecurityGroupAppInstance
-      UserData:
-        Fn::Base64:
-          !Sub
-          - |
-            #!/bin/bash -x
+  #               require_once(ABSPATH . 'wp-settings.php');
+  #             mode: '000644'
+  #             owner: root
+  #             group: root
+  #         services:
+  #           sysvinit:
+  #             httpd:
+  #               enabled: true
+  #               ensureRunning: true
+  #   Properties:
+  #     ImageId: !Ref pAppAmi
+  #     IamInstanceProfile: !Ref rAppInstanceProfile
+  #     InstanceType: !Ref pAppInstanceType
+  #     BlockDeviceMappings:
+  #     - DeviceName: /dev/sdh
+  #       Ebs:
+  #         VolumeSize: 50
+  #         VolumeType: gp2
+  #         Encrypted: true
+  #     KeyName: !Ref pEC2KeyPair
+  #     SecurityGroups:
+  #     - !Ref rSecurityGroupAppInstance
+  #     UserData:
+  #       Fn::Base64:
+  #         !Sub
+  #         - |
+  #           #!/bin/bash -x
 
-            yum update -y
+  #           yum update -y
 
-            EC2_INSTANCE_ID=$(curl -s http://instance-data/latest/meta-data/instance-id)
+  #           EC2_INSTANCE_ID=$(curl -s http://instance-data/latest/meta-data/instance-id)
 
-            ######################################################################
-            # Volume /dev/sdh (which will get created as /dev/xvdh on Amazon Linux)
+  #           ######################################################################
+  #           # Volume /dev/sdh (which will get created as /dev/xvdh on Amazon Linux)
 
-            DATA_STATE="unknown"
-            until [ "${!DATA_STATE}" == "attached" ]; do
-              DATA_STATE=$(aws ec2 describe-volumes \
-              --region ${AWS::Region} \
-              --filters \
-                    Name=attachment.instance-id,Values=${!EC2_INSTANCE_ID} \
-                    Name=attachment.device,Values=/dev/sdh \
-              --query Volumes[].Attachments[].State \
-              --output text)
+  #           DATA_STATE="unknown"
+  #           until [ "${!DATA_STATE}" == "attached" ]; do
+  #             DATA_STATE=$(aws ec2 describe-volumes \
+  #             --region ${AWS::Region} \
+  #             --filters \
+  #                   Name=attachment.instance-id,Values=${!EC2_INSTANCE_ID} \
+  #                   Name=attachment.device,Values=/dev/sdh \
+  #             --query Volumes[].Attachments[].State \
+  #             --output text)
 
-              sleep 5
-            done
+  #             sleep 5
+  #           done
 
-            # Format /dev/xvdh if it does not contain a partition yet
-            if [ "$(file -b -s /dev/xvdh)" == "data" ]; then
-              mkfs -t ext4 /dev/xvdh
-            fi
+  #           # Format /dev/xvdh if it does not contain a partition yet
+  #           if [ "$(file -b -s /dev/xvdh)" == "data" ]; then
+  #             mkfs -t ext4 /dev/xvdh
+  #           fi
 
-            mkdir -p /data
-            mount /dev/xvdh /data
+  #           mkdir -p /data
+  #           mount /dev/xvdh /data
 
-            # Persist the volume in /etc/fstab so it gets mounted again
-            echo '/dev/xvdh /data ext4 defaults,nofail 0 2' >> /etc/fstab
+  #           # Persist the volume in /etc/fstab so it gets mounted again
+  #           echo '/dev/xvdh /data ext4 defaults,nofail 0 2' >> /etc/fstab
 
-            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource rAutoScalingConfigApp --configsets wordpress_install --region ${AWS::Region}
+  #           /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource rAutoScalingConfigApp --configsets wordpress_install --region ${AWS::Region}
 
-            ######################################################################
-            #     NOTE: UPDATE THESE VALUES ACCORDING TO THE COMPLIANCE BODY     #
-            ######################################################################
-            LANDING_PAGE="/var/www/html/landing.html"
-            COMPLIANCE_BODY_LABEL="UK Official"
-            COMPLIANCE_SURVEY_LINK="uk-offical"
-            COMPLIANCE_MATRIX_FILENAME="Cloud-Security-Principles-UK-Controls-Mapping.xlsx"
-            ######################################################################
+  #           ######################################################################
+  #           #     NOTE: UPDATE THESE VALUES ACCORDING TO THE COMPLIANCE BODY     #
+  #           ######################################################################
+  #           LANDING_PAGE="/var/www/html/landing.html"
+  #           COMPLIANCE_BODY_LABEL="UK Official"
+  #           COMPLIANCE_SURVEY_LINK="uk-offical"
+  #           COMPLIANCE_MATRIX_FILENAME="Cloud-Security-Principles-UK-Controls-Mapping.xlsx"
+  #           ######################################################################
 
-            # Download the landing page.
-            sudo wget https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/landing/landing.html -O $LANDING_PAGE
+  #           # Download the landing page.
+  #           sudo wget https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/landing/landing.html -O $LANDING_PAGE
 
-            # Replace relative image links with links to the production S3 source.
-            sudo sed -i 's|images|https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/landing/images|g' $LANDING_PAGE
+  #           # Replace relative image links with links to the production S3 source.
+  #           sudo sed -i 's|images|https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/landing/images|g' $LANDING_PAGE
 
-            # Inject the landing page branding label.
-            sudo sed -i "s|{compliance-body}|$COMPLIANCE_BODY_LABEL|g" $LANDING_PAGE
+  #           # Inject the landing page branding label.
+  #           sudo sed -i "s|{compliance-body}|$COMPLIANCE_BODY_LABEL|g" $LANDING_PAGE
 
-            # Inject the survey link parameter.
-            sudo sed -i "s|{compliance-body-survey-link}|$COMPLIANCE_SURVEY_LINK|g" $LANDING_PAGE
+  #           # Inject the survey link parameter.
+  #           sudo sed -i "s|{compliance-body-survey-link}|$COMPLIANCE_SURVEY_LINK|g" $LANDING_PAGE
 
-            # Inject the security control matrix file location.
-            sudo sed -i "s|{compliance-body-matrix}|https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/$COMPLIANCE_MATRIX_FILENAME|g" $LANDING_PAGE
-          - QSS3Region:
-              !If
-              - GovCloudCondition
-              - s3-us-gov-west-1
-              - s3
+  #           # Inject the security control matrix file location.
+  #           sudo sed -i "s|{compliance-body-matrix}|https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/$COMPLIANCE_MATRIX_FILENAME|g" $LANDING_PAGE
+  #         - QSS3Region:
+  #             !If
+  #             - GovCloudCondition
+  #             - s3-us-gov-west-1
+  #             - s3
   rAutoScalingGroupApp:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn: rAutoScalingConfigApp
