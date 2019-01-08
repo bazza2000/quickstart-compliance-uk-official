@@ -439,7 +439,7 @@ Resources:
     Properties:
       TemplateURL:
         !Sub
-        - https://raw.githubusercontent.com/bazza2000/quickstart-compliance-uk-official/master/templates/application.template
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/application.template
         - QSS3Region:
             !If
             - GovCloudCondition
