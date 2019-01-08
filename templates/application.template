@@ -433,23 +433,23 @@ Resources:
       SubnetIds:
       - !Ref pDBPrivateSubnetA
       - !Ref pDBPrivateSubnetB
-  rRDSInstanceMySQL:
-    Type: AWS::RDS::DBInstance
-    DependsOn:
-    - rDBSubnetGroup
-    - rSecurityGroupRDS
-    Properties:
-      DBName: !Ref pDBName
-      Engine: MySQL
-      MultiAZ: true
-      StorageEncrypted: true
-      MasterUsername: !Ref pDBUser
-      MasterUserPassword: !Ref pDBPassword
-      DBInstanceClass: !Ref pDBClass
-      AllocatedStorage: !Ref pDBAllocatedStorage
-      VPCSecurityGroups:
-      - !Ref rSecurityGroupRDS
-      DBSubnetGroupName: !Ref rDBSubnetGroup
+  # rRDSInstanceMySQL:
+  #   Type: AWS::RDS::DBInstance
+  #   DependsOn:
+  #   - rDBSubnetGroup
+  #   - rSecurityGroupRDS
+  #   Properties:
+  #     DBName: !Ref pDBName
+  #     Engine: MySQL
+  #     MultiAZ: true
+  #     StorageEncrypted: true
+  #     MasterUsername: !Ref pDBUser
+  #     MasterUserPassword: !Ref pDBPassword
+  #     DBInstanceClass: !Ref pDBClass
+  #     AllocatedStorage: !Ref pDBAllocatedStorage
+  #     VPCSecurityGroups:
+  #     - !Ref rSecurityGroupRDS
+  #     DBSubnetGroupName: !Ref rDBSubnetGroup
   rELBApp:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
     DependsOn:
