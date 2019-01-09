@@ -537,16 +537,16 @@ Outputs:
       !GetAtt
       - ManagementVpcTemplate
       - Outputs.rBastionInstanceIP
-  LandingPageURL:
-    Value:
-      !GetAtt
-      - ApplicationTemplate
-      - Outputs.LandingPageURL
-  WebsiteURL:
-    Value:
-      !GetAtt
-      - ApplicationTemplate
-      - Outputs.WebsiteURL
+  # LandingPageURL:
+  #   Value:
+  #     !GetAtt
+  #     - ApplicationTemplate
+  #     - Outputs.LandingPageURL
+  # WebsiteURL:
+  #   Value:
+  #     !GetAtt
+  #     - ApplicationTemplate
+  #     - Outputs.WebsiteURL
   Help:
     Description: For assistance or questions regarding this quickstart please email
       compliance-accelerator@amazon.com
